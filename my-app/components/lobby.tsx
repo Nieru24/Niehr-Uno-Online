@@ -1,11 +1,15 @@
+import RoomCard from "./roomCard";
+
 export default function Lobby() {
   return (
-    <div className="flex flex-1 flex-row 
+    <div
+      className="flex flex-1 flex-row 
                     w-full max-w-[120ch] h-140 
                     justify-start items-center m-10 
-                    bg-mainbackground/60 backdrop-blur-md
+                    bg-mainbackground backdrop-blur-md
                     border border-solid border-text-main/20 rounded-2xl
-                    shadow-2xl">
+                    shadow-2xl"
+    >
       <div className="flex w-full max-w-[50ch] flex-col p-10 justify-center items-center">
         <h2 className="text-text-main text-2xl font-bold mb-8">Game Lobby</h2>
 
@@ -49,8 +53,43 @@ export default function Lobby() {
           Join Game
         </button>
       </div>
+
       <div className="w-[2px] h-[80%] border border-solid border-text-main/20 hidden sm:flex"></div>
-      <div></div>
+
+      <div className="flex flex-1 flex-col w-full max-w-[70ch] h-[80%] p-10 justify-center items-center">
+        <h2 className="text-text-main text-2xl font-bold mb-8">Rooms</h2>
+        <div
+          className="
+              flex-1
+              w-full p-1
+              bg-input-bg/80 backdrop-blur-sm
+              border border-input-border
+              rounded-lg text-text-main
+              outline-none transition-all duration-300
+              overflow-y-scroll custom-scrollbar
+              focus:border-secondary-hover focus:ring-2 focus:ring-secondary/20 focus:shadow-glow-brown
+        "
+        >
+          <RoomCard roomName="Pogita's Room" currentPlayers={3} maxPlayers={10} />
+          <RoomCard roomName="Nieru's Room" currentPlayers={10} maxPlayers={10} />
+          <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
+          <RoomCard roomName="Pogita's Room" currentPlayers={3} maxPlayers={10} />
+          <RoomCard roomName="Nieru's Room" currentPlayers={10} maxPlayers={10} />
+          <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
+          <RoomCard roomName="Pogita's Room" currentPlayers={3} maxPlayers={10} />
+          <RoomCard roomName="Nieru's Room" currentPlayers={10} maxPlayers={10} />
+          <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
+          <RoomCard roomName="Pogita's Room" currentPlayers={3} maxPlayers={10} />
+          <RoomCard roomName="Nieru's Room" currentPlayers={10} maxPlayers={10} />
+          <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
+          <RoomCard roomName="Pogita's Room" currentPlayers={3} maxPlayers={10} />
+          <RoomCard roomName="Nieru's Room" currentPlayers={10} maxPlayers={10} />
+          <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
+          <RoomCard roomName="Pogita's Room" currentPlayers={3} maxPlayers={10} />
+          <RoomCard roomName="Nieru's Room" currentPlayers={10} maxPlayers={10} />
+          <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
+        </div>
+      </div>
     </div>
   );
 }
