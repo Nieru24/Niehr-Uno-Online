@@ -2,7 +2,7 @@ import Lobby from "@/components/lobby";
 
 export default function Home() {
   return (
-    // flex-1 makes this take up all space below the header
+    // aloha
     <main
       className="relative flex flex-1 w-full font-sans bg-[#1a1d1d]"
       style={{
