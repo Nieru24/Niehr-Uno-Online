@@ -1,6 +1,16 @@
+"use client";
+import { useState } from "react";
+import { RefreshCcw } from "lucide-react";
 import RoomCard from "./roomCard";
 
 export default function Lobby() {
+  // Loading State
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
   return (
     <div
       className="flex flex-1 flex-col sm:flex-row 
@@ -12,7 +22,13 @@ export default function Lobby() {
     >
       {/* Left panel */}
       <div className="flex w-full sm:max-w-[50ch] flex-col p-10 justify-center items-center">
-        <h2 className="text-text-main text-2xl font-bold mb-8">Game Lobby</h2>
+        <h2 className="text-text-main text-2xl font-bold">Game Lobby</h2>
+        <h2 className="text-text-main text-center text-sm italic">
+          Enter a room code or choose from the list to join.
+        </h2>
+        <h2 className="text-text-main text-center text-sm italic mb-8">
+          Or create your own room.
+        </h2>
 
         <div className="flex flex-col gap-6 w-full">
           <input
@@ -41,15 +57,45 @@ export default function Lobby() {
           />
         </div>
 
-        <button className="mt-8 w-full py-3 bg-secondary text-xs sm:text-base text-text-main rounded-lg font-bold hover:bg-secondary-hover transition-all">
+        <button className="mt-8 w-full py-3 bg-primary text-xs sm:text-base text-text-main rounded-lg font-bold hover:bg-primary-hover transition-all">
           Join Game
+        </button>
+
+        <div className="flex items-center w-full max-w-[40ch] gap-2 py-3 my-1">
+          <div className="flex-1 h-[1px] bg-text-main/20"></div>
+          <p className="text-text-main uppercase text-xs font-medium select-none">
+            OR
+          </p>
+          <div className="flex-1 h-[1px] bg-text-main/20"></div>
+        </div>
+
+        <button className="w-full py-3 bg-secondary text-xs sm:text-base text-text-main rounded-lg font-bold hover:bg-secondary-hover transition-all">
+          Create Room
         </button>
       </div>
 
       <div className="h-[2px] w-[80%] sm:w-[2px] sm:h-[80%] border border-solid border-text-main/20" />
 
       <div className="flex flex-1 flex-col w-full sm:max-w-[70ch] sm:h-[80%] p-8 sm:p-10">
-        <h2 className="text-text-main text-2xl font-bold mb-4 text-center">Rooms</h2>
+        <div className="flex flex-row items-center justify-center gap-2 mb-4">
+          <h2 className="text-text-main text-2xl font-bold">Rooms</h2>
+          <button
+            onClick={handleRefresh}
+            className="
+              p-1.5
+              text-text-main
+              rounded font-bold
+              hover:cursor-pointer
+              hover:border-secondary-hover hover:ring-1 hover:ring-secondary/20 hover:shadow-glow-brown
+              transition-all
+            "
+          >
+            <RefreshCcw
+              size={16}
+              className={`transition-transform ${isRefreshing ? "animate-spin-reverse" : ""}`}
+            />
+          </button>
+        </div>
 
         <div
           className="flex flex-1 flex-col gap-2
@@ -59,7 +105,11 @@ export default function Lobby() {
             rounded-lg
             overflow-y-auto custom-scrollbar"
         >
-          <RoomCard roomName="Pogiasdasddasdta" currentPlayers={3} maxPlayers={10} />
+          <RoomCard
+            roomName="Pogiasdasddasdta"
+            currentPlayers={3}
+            maxPlayers={10}
+          />
           <RoomCard roomName="Nieru" currentPlayers={9} maxPlayers={10} />
           <RoomCard roomName="HAHAHA" currentPlayers={7} maxPlayers={10} />
           <RoomCard roomName="Pogita" currentPlayers={3} maxPlayers={10} />

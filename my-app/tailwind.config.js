@@ -38,7 +38,16 @@ module.exports = {
         // That "Glow" effect from your reference image
         'glow-green': '0 0 15px rgba(45, 90, 71, 0.4)',
         'glow-brown': '0 0 15px rgba(166, 124, 82, 0.4)',
-      }
+      },
+      animation: {
+      "spin-reverse": "spin-reverse 1s linear infinite",
+      },
+      keyframes: {
+        "spin-reverse": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(-360deg)" },
+        },
+      },
     },
   },
   plugins: [],
