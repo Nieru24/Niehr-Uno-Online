@@ -4,13 +4,35 @@ import { RefreshCcw } from "lucide-react";
 import RoomCard from "./roomCard";
 
 export default function Lobby() {
-  // Loading State
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [playerName, setPlayerName] = useState("");
+  const [roomCode, setRoomCode] = useState("");
 
+  /* Left-side Logic*/
+  const handlePlayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPlayerName(e.target.value);
+  };
+
+  const handleRoomCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRoomCode(e.target.value);
+  };
+
+  const handleJoinGame = () => {
+    // Logic to join the game using playerName and roomCode
+  };
+
+  const handleCreateRoom = () => {
+    console.log("Create Room clicked with playerName:", playerName);
+  };
+
+
+  /* Right-side Logic */
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 1000);
   };
+
+
   return (
     <div
       className="flex flex-1 flex-col sm:flex-row 
@@ -35,6 +57,7 @@ export default function Lobby() {
             type="text"
             id="player-name"
             placeholder="Player Name"
+            onChange={handlePlayerNameChange}
             className="w-full px-4 py-3 
               bg-input-bg/80 backdrop-blur-sm
               border border-input-border
@@ -47,6 +70,7 @@ export default function Lobby() {
             type="text"
             id="room-code"
             placeholder="Room Code"
+            onChange={handleRoomCodeChange}
             className="w-full px-4 py-3 
               bg-input-bg/80 backdrop-blur-sm
               border border-input-border
@@ -69,7 +93,7 @@ export default function Lobby() {
           <div className="flex-1 h-[1px] bg-text-main/20"></div>
         </div>
 
-        <button className="w-full py-3 bg-secondary text-xs sm:text-base text-text-main rounded-lg font-bold hover:bg-secondary-hover transition-all">
+        <button onClick={handleCreateRoom} className="w-full py-3 bg-secondary text-xs sm:text-base text-text-main rounded-lg font-bold hover:bg-secondary-hover transition-all">
           Create Room
         </button>
       </div>
