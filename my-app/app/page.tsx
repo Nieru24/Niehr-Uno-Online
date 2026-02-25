@@ -1,10 +1,11 @@
-import Lobby from "@/components/lobby";
+import Lobby from '@/components/game/lobbyView';
+import WaitingRoom from '@/components/game/waitingView';
 
 export default function Home() {
   return (
     // aloha
     <main
-      className="relative flex flex-1 w-full font-sans bg-[#1a1d1d]"
+      className="relative flex w-full flex-1 bg-[#1a1d1d] font-sans"
       style={{
         backgroundImage: `
           radial-gradient(circle at 0% 0%, rgba(226, 39, 39, 0.15) 0%, transparent 40%),
@@ -13,7 +14,8 @@ export default function Home() {
       }}
     >
       <div className="flex w-full items-center justify-center p-4">
-        <Lobby />
+        {/* <Lobby /> */}
+        <WaitingRoom />
       </div>
     </main>
   );
