@@ -1,18 +1,19 @@
 'use client';
-import io from 'socket.io-client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RefreshCcw } from 'lucide-react';
 import RoomCard from '../ui/roomCard';
+import socket from '../../lib/socket';
 import { useGameSocket } from '../../hooks/useGameSocket';
 
-const socket = io('http://localhost:5000');
+
 
 export default function Lobby() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { roomName, roomCodeReceived } = useGameSocket(socket);
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
+
+  const { rooms } = useGameSocket(socket);
 
   /* Input Logic*/
   const handlePlayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,26 +25,15 @@ export default function Lobby() {
 
   /* Button Logic */
   const handleJoinGame = () => {
-    if (!playerName || !roomCode) {
-      alert('Please enter both player name and room code.');
-      return;
-    } else {
-      socket.emit('joinRoom', { playerName, roomCode });
-    }
+    socket.emit('joinRoom', { playerName, roomCode });
   };
 
   const handleCreateRoom = () => {
-    if (!playerName) {
-      alert('Please enter player name.');
-      return;
-    } else {
-      socket.emit('createRoom', { playerName });
-    }
+    socket.emit('createRoom', { playerName });
   };
 
   const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1000);
+    socket.emit('requestRoomList');
   };
 
   return (
@@ -117,14 +107,26 @@ export default function Lobby() {
         </div>
 
         <div className="custom-scrollbar flex w-full flex-1 flex-col gap-2 overflow-y-auto rounded-lg border border-input-border bg-input-bg/80 p-2 backdrop-blur-sm">
-          {/* {rooms.map((room) => (
+          {rooms.map((room: any) => (
             <RoomCard
-              key={room.id} // Essential for React performance
-              roomName={room.name}
-              currentPlayers={room.players}
-              maxPlayers={room.max}
+              key={room.roomCode}
+              roomName={room.roomName}
+              currentPlayers={room.players?.length || 0}
+              maxPlayers={room.maxPlayers || 10}
+              roomCode={room.roomCode}
+              onJoin={() => {
+                if (!playerName) {
+                  alert('Please enter player name.');
+                  return;
+                } else {
+                  socket.emit('joinRoom', {
+                    playerName,
+                    roomCode: room.roomCode,
+                  });
+                }
+              }}
             />
-          ))} */}
+          ))}
         </div>
       </div>
     </div>

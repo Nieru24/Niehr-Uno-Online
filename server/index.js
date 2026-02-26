@@ -17,41 +17,103 @@ const io = new Server(server, {
   },
 });
 
+// Unique 6-character generator for roomCode
+const generateRoomCode = () => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code;
+  do {
+    code = Array.from({ length: 6 }, () =>
+      chars.charAt(Math.floor(Math.random() * chars.length))
+    ).join("");
+  } while (roomLists[code]); // retry on collision
+  return code;
+};
+
+// Socket.IO connection handler
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
+  socket.emit("updateRoomList", Object.values(roomLists));
+
   socket.on("joinRoom", (data) => {
-    if (!roomLists[data.roomCode]) {
+    const room = roomLists[data.roomCode];
+
+    // Validate player name
+    if (!data.playerName || data.playerName.trim() === "") {
+      socket.emit("error", "Please enter a name.");
+      return;
+    }
+
+    // Validate room existence
+    if (!room) {
       socket.emit("error", "Room does not exist.");
       return;
     }
+
+    // Validate room capacity
+    if (room.players.length >= room.maxPlayers) {
+      socket.emit("error", "Room is full.");
+      return;
+    }
+
+    // Validate player not joined already
+    if (room.players.some((p) => p.id === socket.id)) {
+      socket.emit("error", "Ey, you are already in this room.");
+      return;
+    }
+
+    room.players.push({
+      id: socket.id,
+      name: data.playerName,
+      isHost: false,
+    });
+
     socket.join(data.roomCode);
-    socket.emit("roomJoined", data);
-    console.log(`User ${data.playerName} joined room: ${data.roomCode}`);
+
+    // Broadcast updated room list to all clients
+    io.emit("updateRoomList", Object.values(roomLists));
   });
 
   socket.on("createRoom", (data) => {
+    // Validate player name
+    if (!data.playerName || data.playerName.trim() === "") {
+      socket.emit("error", "Player name cannot be empty.");
+      return;
+    }
+
     const newRoomCode = generateRoomCode();
-    roomLists[newRoomCode] = { ...data, roomCode: newRoomCode };
+
+    roomLists[newRoomCode] = {
+      roomCode: newRoomCode,
+      roomName: data.playerName,
+      players: [{ id: socket.id, name: data.playerName, isHost: true }],
+      maxPlayers: 10,
+    };
+
     socket.join(newRoomCode);
-    socket.emit("roomJoined", { ...data, roomCode: newRoomCode });
-    console.log(`User ${data.playerName} created room: ${newRoomCode}`);
+
+    // Broadcast updated room list to all clients
+    io.emit("updateRoomList", Object.values(roomLists));
+    console.log(roomLists);
+  });
+
+  socket.on("requestRoomList", () => {
+    socket.emit("updateRoomList", Object.values(roomLists));
   });
 
   socket.on("disconnect", () => {
-    io.emit("userDisconnected", socket.id);
+    for (const roomCode in roomLists) {
+      const room = roomLists[roomCode];
+      room.players = room.players.filter((p) => p.id !== socket.id);
+
+      if (room.players.length === 0) {
+        delete roomLists[roomCode];
+      }
+    }
+    io.emit("updateRoomList", Object.values(roomLists));
     console.log(`User disconnected: ${socket.id}`);
   });
 });
-
-const generateRoomCode = () => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-};
 
 server.listen(5000, () => {
   console.log("Server is running on port 5000");

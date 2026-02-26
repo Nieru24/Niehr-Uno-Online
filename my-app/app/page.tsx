@@ -14,8 +14,8 @@ export default function Home() {
       }}
     >
       <div className="flex w-full items-center justify-center p-4">
-        {/* <Lobby /> */}
-        <WaitingRoom />
+        <Lobby />
+        {/* <WaitingRoom /> */}
       </div>
     </main>
   );

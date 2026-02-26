@@ -2,6 +2,7 @@ interface RoomCardProps {
   roomName?: string;
   currentPlayers?: number;
   maxPlayers?: number;
+  roomCode?: string;
   onJoin?: () => void;
 }
 
@@ -9,6 +10,7 @@ export default function RoomCard({
   roomName = 'Room Name',
   currentPlayers = 1,
   maxPlayers = 10,
+  roomCode,
   onJoin,
 }: RoomCardProps) {
   const isFull = currentPlayers >= maxPlayers;
@@ -20,6 +22,7 @@ export default function RoomCard({
       : fillPercent >= 70
         ? 'bg-uno-yellow'
         : 'bg-uno-green';
+  
 
   return (
     <div className="flex h-12 w-full flex-row items-center justify-between gap-2 rounded-md border border-solid border-text-main/10 bg-mainbackground/60 px-3 transition-all hover:border-secondary-hover hover:bg-mainbackground/70 hover:shadow-glow-brown hover:ring-2 hover:ring-secondary/20 sm:p-1">

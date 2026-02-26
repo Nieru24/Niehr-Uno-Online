@@ -1,32 +1,43 @@
-import { useState, useEffect } from "react";
-import { Socket } from "socket.io-client";
+import { useState, useEffect } from 'react';
+
+interface Player {
+  id: string;
+  name: string;
+  isHost: boolean;
+}
+
+interface Room {
+  roomCode: string;
+  roomName: string;
+  players: Player[];
+  maxPlayers: number;
+}
+
+interface Socket {
+  on: (event: string, callback: (data: any) => void) => void;
+  off: (event: string, callback?: (data: any) => void) => void;
+  emit: (event: string, data?: any) => void;
+  connected: boolean;
+  connect: () => void;
+}
 
 export const useGameSocket = (socket: Socket) => {
-  const [roomName, setRoomName] = useState("");
-  const [roomCodeReceived, setRoomCodeReceived] = useState("");
+  const [rooms, setRooms] = useState<Room[]>([]);
 
   useEffect(() => {
-    const handleRoom = (data: any) => {
-      setRoomCodeReceived(data.roomCode);
-      setRoomName(data.roomName);
-      console.log("Room joined:", data);
-    };
+    if (!socket.connected) socket.connect();
 
-    const handleError = (error: any) => {
-      alert(error);
-    };
+    // Lobby Updates
+    socket.on('updateRoomList', (data: Room[]) => setRooms(data));
 
-
-    socket.on("error", handleError);
-    socket.on("roomJoined", handleRoom);
+    // Error Alerts
+    socket.on('error', (message: string) => alert(message));
 
     return () => {
-      socket.off("roomJoined");
-      socket.off("error");
+      socket.off('error');
+      socket.off('updateRoomList');
     };
-
-
   }, [socket]);
 
-  return { roomName,roomCodeReceived };
+  return { rooms };
 };
