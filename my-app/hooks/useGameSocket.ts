@@ -23,6 +23,7 @@ interface Socket {
 
 export const useGameSocket = (socket: Socket) => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [activeRoomCode, setActiveRoomCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (!socket.connected) socket.connect();
@@ -33,11 +34,18 @@ export const useGameSocket = (socket: Socket) => {
     // Error Alerts
     socket.on('error', (message: string) => alert(message));
 
+    // Room Join Confirmation
+    socket.on('roomJoined', (data: { roomCode: string }) => {
+      setActiveRoomCode(data.roomCode);
+      console.log("Hook confirmed we are in room:", data.roomCode);
+    });
+
     return () => {
       socket.off('error');
       socket.off('updateRoomList');
+      socket.off('roomJoined');
     };
   }, [socket]);
 
-  return { rooms };
+  return { rooms, activeRoomCode };
 };

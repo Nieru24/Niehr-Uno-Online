@@ -69,6 +69,8 @@ io.on("connection", (socket) => {
     });
 
     socket.join(data.roomCode);
+    socket.emit("roomJoined", { roomCode: data.roomCode });
+    console.log(`User ${socket.id} joined room ${data.roomCode}`);
 
     // Broadcast updated room list to all clients
     io.emit("updateRoomList", Object.values(roomLists));
@@ -91,6 +93,7 @@ io.on("connection", (socket) => {
     };
 
     socket.join(newRoomCode);
+    socket.emit("roomJoined", { roomCode: newRoomCode });
 
     // Broadcast updated room list to all clients
     io.emit("updateRoomList", Object.values(roomLists));
@@ -99,6 +102,16 @@ io.on("connection", (socket) => {
 
   socket.on("requestRoomList", () => {
     socket.emit("updateRoomList", Object.values(roomLists));
+  });
+
+  socket.on("leaveRoom", (data) => {
+    const room = roomLists[data.roomCode];
+
+    if (room) {
+      room.players = room.players.filter((p) => p.id !== socket.id);
+      socket.leave(data.roomCode);
+      console.log(`User ${socket.id} left ${data.roomCode}'s room`);
+    }
   });
 
   socket.on("disconnect", () => {

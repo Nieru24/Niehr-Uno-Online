@@ -1,24 +1,22 @@
 'use client';
 import { useState } from 'react';
-import io from 'socket.io-client';
+import socket from '../../lib/socket';
 import { useGameSocket } from '../../hooks/useGameSocket';
 import PlayerCard from '../ui/playerCard';
-import { Crown, LogOut, Users, Copy, Check, Wifi, Play } from 'lucide-react';
+import { LogOut, Users, Copy, Check, Wifi, Play } from 'lucide-react';
 
-const socket = io('http://localhost:5000');
 
 export default function WaitingRoom() {
-  const { roomName, roomCodeReceived } = useGameSocket(socket);
-  const [playerName, setPlayerName] = useState('');
-  const [roomCode, setRoomCode] = useState('');
   const [copied, setCopied] = useState(false);
   const [isReady, setIsReady] = useState(false);
+
+  const { rooms } = useGameSocket(socket);
 
   const handleCopy = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
+1
   const handleReady = () => {
     const newReady = !isReady;
     setIsReady(newReady);
