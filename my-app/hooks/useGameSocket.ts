@@ -1,17 +1,5 @@
 import { useState, useEffect } from 'react';
-
-interface Player {
-  id: string;
-  name: string;
-  isHost: boolean;
-}
-
-interface Room {
-  roomCode: string;
-  roomName: string;
-  players: Player[];
-  maxPlayers: number;
-}
+import { Room } from '../app/types/game';
 
 interface Socket {
   on: (event: string, callback: (data: any) => void) => void;

@@ -1,25 +1,30 @@
 'use client';
 import { useState } from 'react';
 import socket from '../../lib/socket';
-import { useGameSocket } from '../../hooks/useGameSocket';
 import PlayerCard from '../ui/playerCard';
 import { LogOut, Users, Copy, Check, Wifi, Play } from 'lucide-react';
+import { Room } from '@/app/types/game';
 
-
-export default function WaitingRoom() {
+export default function WaitingRoom({
+  roomCode,
+  currentRoom,
+}: {
+  roomCode: string;
+  currentRoom: Room;
+}) {
   const [copied, setCopied] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
-  const { rooms } = useGameSocket(socket);
-
   const handleCopy = () => {
+    navigator.clipboard.writeText(roomCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-1
+  
   const handleReady = () => {
-    const newReady = !isReady;
-    setIsReady(newReady);
+    setIsReady(!isReady);
+    // Add logic in index.js for player ready
+    socket.emit('',{});
   };
 
   return (
@@ -27,11 +32,11 @@ export default function WaitingRoom() {
       {/* Header */}
       <div className="flex w-full flex-row items-center justify-between gap-3 border-b border-text-main/20 px-6 py-4">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-text-main">Test's Room</h1>
+          <h1 className="text-2xl font-bold text-text-main">{currentRoom.roomName}'s Room</h1>
           <div className="mt-0.5 flex items-center gap-1.5">
             <Wifi size={12} className="text-uno-green" />
             <span className="text-xs text-text-main/50">
-              4/10 Players Connected
+              {currentRoom.players.length}/{currentRoom.maxPlayers}
             </span>
           </div>
         </div>
@@ -42,7 +47,7 @@ export default function WaitingRoom() {
           <span className="text-xs uppercase tracking-widest text-text-main/50">
             Code
           </span>
-          <span className="font-bold">------</span>
+          <span className="font-bold">{roomCode}</span>
           {copied ? (
             <Check size={14} className="text-uno-green" />
           ) : (
@@ -56,35 +61,19 @@ export default function WaitingRoom() {
         <div className="mb-4 flex items-center gap-2">
           <Users size={14} className="text-text-main/50" />
           <span className="text-xs uppercase tracking-widest text-text-main/50">
-            Playersss
+            Players
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          <PlayerCard
-            isHost={true}
-            playerName="Test Player 1"
-            isReady={true}
-            isMe={false}
-          />
-          <PlayerCard
-            isHost={false}
-            playerName="Test Player 2"
-            isReady={false}
-            isMe={true}
-          />
-          <PlayerCard
-            isHost={false}
-            playerName="Test Player 3"
-            isReady={true}
-            isMe={true}
-          />
-          <PlayerCard
-            isHost={false}
-            playerName="Test Player 4asdadadadasd"
-            isReady={false}
-            isMe={false}
-          />
-          <PlayerCard />
+          {currentRoom.players.map((player) => (
+            <PlayerCard
+              key={player.id}
+              playerName={player.name}
+              isHost={player.isHost}
+              isMe={player.id === socket.id}
+              isReady={false} 
+            />
+          ))}
         </div>
       </div>
 
@@ -119,9 +108,9 @@ export default function WaitingRoom() {
               : 'bg-secondary text-text-main hover:bg-secondary-hover'
           } `}
         >
-          {isReady && <Check size={15} />}
+          {isReady && <Check size={14} />}
           {isReady ? 'Ready! (click to cancel)' : 'Ready Up'}
-          {/* Other design if the host "Start Game with crown" */}
+          {/* Other design if the host "Start Game with crown/play" */}
         </button>
       </div>
     </div>

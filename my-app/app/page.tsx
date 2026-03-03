@@ -1,9 +1,20 @@
+'use client';
 import Lobby from '@/components/game/lobbyView';
 import WaitingRoom from '@/components/game/waitingView';
+import GameView from '@/components/game/gameView';
+
+import socket from '@/lib/socket';
+import { useGameSocket } from '@/hooks/useGameSocket';
+import { useState } from 'react';
 
 export default function Home() {
+  
+  const { activeRoomCode, rooms } = useGameSocket(socket);
+  const currentRoom = rooms.find((r) => r.roomCode === activeRoomCode) ?? null;
+
+  const [inGame, setInGame] = useState(false);
+
   return (
-    // aloha
     <main
       className="relative flex w-full flex-1 bg-[#1a1d1d] font-sans"
       style={{
@@ -14,8 +25,18 @@ export default function Home() {
       }}
     >
       <div className="flex w-full items-center justify-center p-4">
-        <Lobby />
-        {/* <WaitingRoom /> */}
+        {!activeRoomCode ? (
+          <Lobby rooms={rooms} />
+        ) : !currentRoom ? (
+          <div className="text-text-main">Loading room...</div>
+        ) : !inGame ? (
+          <WaitingRoom
+            roomCode={activeRoomCode}
+            currentRoom={currentRoom}
+          />
+        ) : (
+          <GameView roomCode={activeRoomCode} />
+        )}
       </div>
     </main>
   );

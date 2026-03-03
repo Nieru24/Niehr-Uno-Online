@@ -1,17 +1,15 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { RefreshCcw } from 'lucide-react';
 import RoomCard from '../ui/roomCard';
 import socket from '../../lib/socket';
-import { useGameSocket } from '../../hooks/useGameSocket';
+import { Room } from '@/app/types/game';
 
-export default function Lobby() {
+export default function Lobby({ rooms }: { rooms: Room[] }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
-
-  const { rooms, activeRoomCode } = useGameSocket(socket);
 
   /* Input Logic*/
   const handlePlayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,17 +32,8 @@ export default function Lobby() {
     socket.emit('requestRoomList');
   };
 
-  const handleTestButton = () => {
-    if (activeRoomCode) {
-      console.log('You are currently in room:', activeRoomCode);
-    } else {
-      console.log('You are not in a room yet.');
-    }
-  };
-
   return (
     <div className="sm:h-140 m-10 flex h-auto w-full max-w-[120ch] flex-1 flex-col items-center justify-start rounded-2xl border border-solid border-text-main/20 bg-mainbackground shadow-2xl backdrop-blur-md sm:flex-row">
-      <button onClick={handleTestButton}>Test button</button>
       {/* Left panel */}
       <div className="flex w-full flex-col items-center justify-center p-10 sm:max-w-[50ch]">
         <h2 className="text-2xl font-bold text-text-main">Game Lobby</h2>
